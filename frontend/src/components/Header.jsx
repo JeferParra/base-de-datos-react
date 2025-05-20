@@ -24,6 +24,9 @@ function Header() {
                 <NavDropdown.Item href="/buscarCliente">
                   Buscar
                 </NavDropdown.Item>
+                <NavDropdown.Item href="/historialCliente">
+                  Historial
+                </NavDropdown.Item>
               </NavDropdown>
               <NavDropdown title="Ventas" id="collapsible-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">

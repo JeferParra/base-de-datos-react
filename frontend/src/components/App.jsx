@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Header from "./Header";
 import NuevoCliente from "../pages/clientes/NuevoCliete";
 import BuscarCliente from "../pages/clientes/BuscarCliente";
+import HistorialCliente from "../pages/clientes/HIstorialCliente";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/nuevoCliente" element={<NuevoCliente />} />
             <Route path="/buscarCliente" element={<BuscarCliente />} />
+            <Route path="/historialCliente" element={<HistorialCliente />} />
           </Routes>
         </Router>
       </div>
