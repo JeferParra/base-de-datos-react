@@ -7,10 +7,11 @@ import Header from "./Header";
 // Clientes
 import NuevoCliente from "../pages/clientes/NuevoCliete";
 import BuscarCliente from "../pages/clientes/BuscarCliente";
-import HistorialCliente from "../pages/clientes/HIstorialCliente";
+import HistorialCliente from "../pages/clientes/HistorialCliente";
 
 // Ventas
 import CargarPlanilla from "../pages/ventas/CargarPlanilla";
+import VerPlanilla from "../pages/ventas/VerPlanilla";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="/historialCliente" element={<HistorialCliente />} />
 
             <Route path="/cargarPlanilla" element={<CargarPlanilla />} />
+            <Route path="/verPlanilla" element={<VerPlanilla />} />
           </Routes>
         </Router>
       </div>

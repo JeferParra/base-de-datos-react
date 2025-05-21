@@ -32,7 +32,7 @@ function Header() {
                 <NavDropdown.Item href="/cargarPlanilla">
                   Cargar Planilla
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#/verPlanilla">
+                <NavDropdown.Item href="/verPlanilla">
                   Ver Planilla
                 </NavDropdown.Item>
               </NavDropdown>

@@ -76,7 +76,7 @@ function CargarPlanilla() {
         </Form>
         <div className="container">
           <h5 className="mt-5 text-center">Resumen del ultimo ingreso</h5>
-          <table className="table mt-3 mx-auto table-striped table-hover">
+          <table className="table mt-3 mx-auto table-striped table-hover table-bordered">
             <thead>
               <tr>
                 <td>Codigo</td>
