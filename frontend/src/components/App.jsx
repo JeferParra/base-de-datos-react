@@ -3,9 +3,14 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 // Import Components
 import Header from "./Header";
+
+// Clientes
 import NuevoCliente from "../pages/clientes/NuevoCliete";
 import BuscarCliente from "../pages/clientes/BuscarCliente";
 import HistorialCliente from "../pages/clientes/HIstorialCliente";
+
+// Ventas
+import CargarPlanilla from "../pages/ventas/CargarPlanilla";
 
 function App() {
   return (
@@ -18,6 +23,8 @@ function App() {
             <Route path="/nuevoCliente" element={<NuevoCliente />} />
             <Route path="/buscarCliente" element={<BuscarCliente />} />
             <Route path="/historialCliente" element={<HistorialCliente />} />
+
+            <Route path="/cargarPlanilla" element={<CargarPlanilla />} />
           </Routes>
         </Router>
       </div>

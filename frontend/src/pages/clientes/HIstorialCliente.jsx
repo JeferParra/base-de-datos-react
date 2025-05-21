@@ -31,9 +31,9 @@ function HistorialCliente() {
           </Form>
         </div>
         <div className="container">
-          <h1 className="text-center mt-5">Informacion del Cliente</h1>
+          <h3 className="text-center mt-5">Informacion del Cliente</h3>
 
-          <table className="table w-50 mt-5 mx-auto table-striped table-hover">
+          <table className="table w-50 mt-3 mx-auto table-striped table-hover">
             <tbody>
               <tr>
                 <td className="w-25 fw-bold text-end">Codigo:</td>

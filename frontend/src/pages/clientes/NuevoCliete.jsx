@@ -6,8 +6,11 @@ import Row from "react-bootstrap/Row";
 function NuevoCliente() {
   return (
     <>
-      <h1 className="my-5 pt-5 text-center">Este es Nuevo Cliente</h1>
-      <div className="container mb-5" data-bs-theme="dark">
+      <h1 className="my-5 pt-5 text-center">Nuevo Cliente</h1>
+      <div
+        className="container mb-5 bg-light p-5 rounded-5"
+        data-bs-theme="dark"
+      >
         <Form>
           <Row className="mb-3 fw-bold">
             <Form.Group as={Col} controlId="codigo">

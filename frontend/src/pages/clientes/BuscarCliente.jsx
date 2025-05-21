@@ -35,6 +35,7 @@ function BuscarCliente() {
       });
       setSeleccionVehiculo("Todos");
       setSeleccionRuta("Todos");
+      setInputBuscar("");
     } else {
       setData({
         vehiculo: { disabled: true, selected: true },
@@ -49,7 +50,10 @@ function BuscarCliente() {
   return (
     <>
       <h1 className="my-5 pt-5 text-center">Este es Buscar Clientes</h1>
-      <div className="container mb-5" data-bs-theme="dark">
+      <div
+        className="container mb-5 bg-light rounded-5 p-5"
+        data-bs-theme="dark"
+      >
         <Form>
           <Row className="mb-3 fw-bold">
             <Form.Group as={Col} controlId="formGridState">

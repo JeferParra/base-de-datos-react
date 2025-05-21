@@ -29,10 +29,10 @@ function Header() {
                 </NavDropdown.Item>
               </NavDropdown>
               <NavDropdown title="Ventas" id="collapsible-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">
+                <NavDropdown.Item href="/cargarPlanilla">
                   Cargar Planilla
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">
+                <NavDropdown.Item href="#/verPlanilla">
                   Ver Planilla
                 </NavDropdown.Item>
               </NavDropdown>
