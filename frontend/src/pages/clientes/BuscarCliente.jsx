@@ -5,6 +5,8 @@ import Row from "react-bootstrap/Row";
 
 import { useState } from "react";
 
+const url = "http://localhost:4000";
+
 function BuscarCliente() {
   const datosTabla = {
     vehiculo: { disabled: true },
@@ -16,6 +18,11 @@ function BuscarCliente() {
   const [seleccionVehiculo, setSeleccionVehiculo] = useState("Todos");
   const [seleccionRuta, setSeleccionRuta] = useState("Todos");
   const [inputBuscar, setInputBuscar] = useState("");
+  const [estado, setEstado] = useState("Todos");
+  const [seleccionBuscarPor, setSeleccionBuscarPor] = useState("Todos");
+  const [resultado, setResultado] = useState([]);
+
+  const [hidden, setHidden] = useState(true);
 
   function activarEspacios(e) {
     const opcion = e.target.value;
@@ -47,19 +54,55 @@ function BuscarCliente() {
     }
   }
 
+  async function enviar(e) {
+    e.preventDefault();
+    setResultado([]);
+    try {
+      const params = new URLSearchParams();
+
+      if (estado !== "Todos") params.append("estado", estado);
+      if (seleccionVehiculo !== "Todos")
+        params.append("vehiculo", seleccionVehiculo);
+      if (seleccionRuta !== "Todos") params.append("ruta", seleccionRuta);
+
+      if (seleccionBuscarPor === "Codigo") {
+        params.append("codigo", inputBuscar);
+      } else if (seleccionBuscarPor === "Nombre") {
+        params.append("nombre", inputBuscar);
+      } else if (seleccionBuscarPor === "Barrio") {
+        params.append("barrio", inputBuscar);
+      }
+
+      const response = await fetch(`${url}/buscarCliente?${params.toString()}`);
+      const data = await response.json();
+
+      setResultado(data);
+      setHidden(false);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
   return (
     <>
-      <h1 className="my-5 pt-5 text-center">Este es Buscar Clientes</h1>
+      <div className="container my-5 pt-5 text-center">
+        <h1 className="bg-light rounded-pill w-75 mx-auto">Buscar Clientes</h1>
+      </div>
+
       <div
         className="container mb-5 bg-light rounded-5 p-5"
         data-bs-theme="dark"
       >
-        <Form>
+        <Form onSubmit={enviar}>
           <Row className="mb-3 fw-bold">
             <Form.Group as={Col} controlId="formGridState">
               <Form.Label>Estado:</Form.Label>
-              <Form.Select>
-                {/* importar opciones desde la base de datos */}
+              <Form.Select
+                value={estado}
+                onChange={(e) => {
+                  setEstado(e.target.value);
+                }}
+              >
                 <option value={"Todos"}>Todos</option>
                 <option value={"Activo"}>Activo</option>
                 <option value={"Inactivo"}>Inactivo</option>
@@ -67,7 +110,13 @@ function BuscarCliente() {
             </Form.Group>
             <Form.Group as={Col} controlId="formGridState">
               <Form.Label>Buscar por:</Form.Label>
-              <Form.Select onChange={(e) => activarEspacios(e)}>
+              <Form.Select
+                value={seleccionBuscarPor}
+                onChange={(e) => {
+                  activarEspacios(e);
+                  setSeleccionBuscarPor(e.target.value);
+                }}
+              >
                 <option>Todos</option>
                 <option>Codigo</option>
                 <option>Barrio</option>
@@ -126,6 +175,49 @@ function BuscarCliente() {
             Submit
           </Button>
         </Form>
+      </div>
+      <div className="container" data-bs-theme="dark" hidden={hidden}>
+        <h4 className="bg-light w-50 text-center rounded-pill mx-auto">
+          Coincidencias encontradas: {resultado.length}
+        </h4>
+        <table className="table mt-3 mx-auto table-striped table-hover table-bordered">
+          <thead>
+            <tr>
+              <td>Codigo</td>
+              <td>Nombre</td>
+              <td>Direccion</td>
+              <td>Barrio</td>
+              <td>Telefono</td>
+              <td>Descripcion</td>
+              <td>Bot</td>
+              <td>Vehiculo</td>
+              <td>Ruta</td>
+              <td>Saldo</td>
+              <td>Estado</td>
+              <td>Editar</td>
+            </tr>
+          </thead>
+          <tbody>
+            {resultado.map((item) => (
+              <tr>
+                <td key={item.cliente_id}>{item.codigo}</td>
+                <td key={item.cliente_id}>{item.nombre}</td>
+                <td key={item.cliente_id}>{item.direccion}</td>
+                <td key={item.cliente_id}>{item.barrio}</td>
+                <td key={item.cliente_id}>{item.telefono}</td>
+                <td key={item.cliente_id}>{item.descripcion}</td>
+                <td key={item.cliente_id}>{item.botellones}</td>
+                <td key={item.cliente_id}>{item.vehiculo}</td>
+                <td key={item.cliente_id}>{item.ruta}</td>
+                <td key={item.cliente_id}>{item.saldo}</td>
+                <td key={item.cliente_id}>{item.estado}</td>
+                <td key={item.cliente_id}>
+                  <Button className="button">Editar</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
