@@ -117,6 +117,30 @@ app.get("/buscarCliente", async (req, res) => {
   }
 });
 
+// Historial Cliente
+
+app.get("/historialCliente", async (req, res) => {
+  try {
+    const { codigo } = req.query;
+    const responseData = await db.query(
+      "SELECT * FROM clientes WHERE codigo = $1",
+      [codigo]
+    );
+    const responseVentas = await db.query(
+      "SELECT * FROM ventas WHERE codigo = $1 ORDER BY fecha DESC",
+      [codigo]
+    );
+
+    if (responseData.rows.length === 0) {
+      return res.status(404).json({ error: "Cliente no encontrado" });
+    }
+
+    res.json({ cliente: responseData.rows[0], ventas: responseVentas.rows });
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
 // Listen
 
 app.listen(port, () => {
