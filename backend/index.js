@@ -108,9 +108,8 @@ app.get("/buscarCliente", async (req, res) => {
       query += ` AND estado = $${values.length}`;
     }
 
-    const response = await db.query(query, values);
+    const response = await db.query(`${query} ORDER BY codigo ASC`, values);
     res.json(response.rows);
-    console.log("Params:", req.query);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Error en la búsqueda");
@@ -139,6 +138,24 @@ app.get("/historialCliente", async (req, res) => {
   } catch (error) {
     console.error(error.message);
   }
+});
+
+// PATCH
+
+// Editar cliente en buscar cliente
+app.patch("/editarCliente", async (req, res) => {
+  const { codigo } = req.query;
+  const campos = req.body;
+
+  const columnas = Object.keys(campos);
+  const valores = Object.values(campos);
+
+  const setQuery = columnas.map((col, i) => `${col} = $${i + 1}`).join(" ,");
+  valores.push(codigo);
+  const query = `UPDATE clientes SET ${setQuery} WHERE codigo = $${valores.length}`;
+
+  await db.query(query, valores);
+  res.json({ mensaje: "Cliente actualizado correctamente" });
 });
 
 // Listen

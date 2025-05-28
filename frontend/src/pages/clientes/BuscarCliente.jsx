@@ -5,6 +5,9 @@ import Row from "react-bootstrap/Row";
 
 import { useState } from "react";
 
+import ModalEditarCliente from "../../components/modal/ModalEditarCliente";
+import { useEffect } from "react";
+
 const url = "http://localhost:4000";
 
 function BuscarCliente() {
@@ -23,6 +26,10 @@ function BuscarCliente() {
   const [resultado, setResultado] = useState([]);
 
   const [hidden, setHidden] = useState(true);
+  const [showModalEditar, setShowModalEditar] = useState(false);
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+
+  const [refrescar, setRefrescar] = useState(false);
 
   function activarEspacios(e) {
     const opcion = e.target.value;
@@ -54,8 +61,23 @@ function BuscarCliente() {
     }
   }
 
-  async function enviar(e) {
-    e.preventDefault();
+  const handleEdit = (cliente) => {
+    setClienteSeleccionado(cliente);
+    setShowModalEditar(true);
+  };
+
+  const [iniciado, setIniciado] = useState(false);
+
+  useEffect(() => {
+    if (iniciado) {
+      enviar();
+    } else {
+      setIniciado(true);
+    }
+  }, [refrescar]); // se refresca cuando el valor cambia
+
+  // Funcion para buscar clientes
+  async function enviar() {
     setResultado([]);
     try {
       const params = new URLSearchParams();
@@ -83,6 +105,11 @@ function BuscarCliente() {
     }
   }
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    enviar();
+  }
+
   return (
     <>
       <div className="container my-5 pt-5 text-center">
@@ -93,7 +120,7 @@ function BuscarCliente() {
         className="container mb-5 bg-light rounded-5 p-5"
         data-bs-theme="dark"
       >
-        <Form onSubmit={enviar}>
+        <Form onSubmit={handleSubmit}>
           <Row className="mb-3 fw-bold">
             <Form.Group as={Col} controlId="formGridState">
               <Form.Label>Estado:</Form.Label>
@@ -199,26 +226,34 @@ function BuscarCliente() {
           </thead>
           <tbody>
             {resultado.map((item) => (
-              <tr>
-                <td key={item.cliente_id}>{item.codigo}</td>
-                <td key={item.cliente_id}>{item.nombre}</td>
-                <td key={item.cliente_id}>{item.direccion}</td>
-                <td key={item.cliente_id}>{item.barrio}</td>
-                <td key={item.cliente_id}>{item.telefono}</td>
-                <td key={item.cliente_id}>{item.descripcion}</td>
-                <td key={item.cliente_id}>{item.botellones}</td>
-                <td key={item.cliente_id}>{item.vehiculo}</td>
-                <td key={item.cliente_id}>{item.ruta}</td>
-                <td key={item.cliente_id}>{item.saldo}</td>
-                <td key={item.cliente_id}>{item.estado}</td>
-                <td key={item.cliente_id}>
-                  <Button className="button">Editar</Button>
+              <tr key={item.cliente_id}>
+                <td>{item.codigo}</td>
+                <td>{item.nombre}</td>
+                <td>{item.direccion}</td>
+                <td>{item.barrio}</td>
+                <td>{item.telefono}</td>
+                <td>{item.descripcion}</td>
+                <td>{item.botellones}</td>
+                <td>{item.vehiculo}</td>
+                <td>{item.ruta}</td>
+                <td>{item.saldo}</td>
+                <td>{item.estado}</td>
+                <td>
+                  <Button className="button" onClick={() => handleEdit(item)}>
+                    Editar
+                  </Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <ModalEditarCliente
+        show={showModalEditar}
+        onClose={() => setShowModalEditar(false)}
+        clienteData={clienteSeleccionado}
+        onClienteActualizado={() => setRefrescar(!refrescar)}
+      />
     </>
   );
 }
