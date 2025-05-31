@@ -34,6 +34,17 @@ app.get("/rutas", async (req, res) => {
   }
 });
 
+// // Productos
+
+app.get("/productos", async (req, res) => {
+  try {
+    const response = await db.query("SELECT * FROM productos");
+    res.json(response.rows);
+  } catch (error) {
+    console.error("Problemas al cargar los productos", error.message);
+  }
+});
+
 // ROUTES
 
 // POST
