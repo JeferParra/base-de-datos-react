@@ -2,8 +2,9 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useEffect } from "react";
+import ModalConfirmarVenta from "../../components/modal/ModalConfirmarVenta";
 
 const url = "http://localhost:4000";
 
@@ -19,6 +20,7 @@ function CargarPlanilla() {
   const [codigo, setCodigo] = useState("");
   const [validacionCodigo, setValidacionCodigo] = useState(true);
   const [cantidad, setCantidad] = useState(0);
+  const [cantidadImput, setCantidadImput] = useState(false);
   const [pago, setPago] = useState(0);
   const [botellones, setBotellones] = useState(0);
   const [formaDePago, setFormaDePago] = useState("Efectivo");
@@ -198,6 +200,43 @@ function CargarPlanilla() {
     setNuevoSaldo(saldoFinal);
   }
 
+  // Confirmacion de la venta
+  const inputRef = useRef(null);
+
+  // Enfoque a la casilla codigo al confirmar la venta
+  useEffect(() => {
+    if (mostrarResultados && inputRef.current) {
+      requestAnimationFrame(() => {
+        inputRef.current.focus();
+        inputRef.current.select();
+      });
+    }
+  }, [mostrarResultados]);
+
+  function handleModalClose() {
+    setMostrarResultados(true);
+  }
+
+  function handleModalExited() {
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.select();
+      }
+    }, 100); // 100ms suele ser suficiente
+  }
+
+  async function confirmarVenta(e) {
+    e.preventDefault();
+    setMostrarResultados(!mostrarResultados);
+
+    setCodigo("");
+    setCantidad(0);
+    setPago(0);
+    setBotellones(0);
+    setFormaDePago("Efectivo");
+  }
+
   return (
     <>
       <div className="container" data-bs-theme="dark">
@@ -261,7 +300,16 @@ function CargarPlanilla() {
               <Form.Select
                 required
                 value={producto}
-                onChange={(e) => setProducto(e.target.value)}
+                onChange={(e) => {
+                  const nuevoProducto = e.target.value;
+                  setProducto(nuevoProducto);
+                  if (nuevoProducto === "Abono") {
+                    setCantidad(0);
+                    setCantidadImput(true);
+                  } else {
+                    setCantidadImput(false);
+                  }
+                }}
               >
                 <option disabled hidden>
                   Seleccione
@@ -287,6 +335,7 @@ function CargarPlanilla() {
                 onFocus={(e) => e.target.select()}
                 onBlur={() => datosCliente()}
                 isInvalid={!validacionCodigo}
+                ref={inputRef}
                 autoFocus
               />
               <Form.Text className="text-danger" hidden={validacionCodigo}>
@@ -300,6 +349,7 @@ function CargarPlanilla() {
                 value={cantidad}
                 onChange={(e) => setCantidad(e.target.value)}
                 onFocus={(e) => e.target.select()}
+                disabled={cantidadImput}
               />
             </Form.Group>
             <Form.Group as={Col} controlId="pago">
@@ -339,41 +389,32 @@ function CargarPlanilla() {
             Cargar
           </Button>
         </Form>
-        <div className="container" hidden={mostrarResultados}>
-          <h5 className="mt-5 text-center w-25 bg-white mx-auto py-1 rounded-pill">
-            Resumen del ultimo ingreso
-          </h5>
-          <table className="table mt-4 mx-auto table-striped table-hover table-bordered">
-            <thead>
-              <tr>
-                <td>Codigo</td>
-                <td>Producto</td>
-                <td>Valor</td>
-                <td>Cantidad</td>
-                <td>Contado</td>
-                <td>Credito</td>
-                <td>Abono</td>
-                <td>Saldo</td>
-                <td>Botellones</td>
-                <td>F. de pago</td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{infoCliente.codigo}</td>
-                <td>{producto}</td>
-                <td>{producto !== "Abono" ? valorProducto : pago}</td>
-                <td>{cantidad}</td>
-                <td>{contado}</td>
-                <td>{credito}</td>
-                <td>{abono}</td>
-                <td>{nuevoSaldo}</td>
-                <td>{botellones}</td>
-                <td>{formaDePago}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <ModalConfirmarVenta
+          show={!mostrarResultados}
+          onClose={handleModalClose}
+          onExited={handleModalExited}
+          onSubmit={confirmarVenta}
+          onClick={confirmarVenta}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              confirmarVenta();
+            }
+          }}
+          {...{
+            codigo,
+            producto,
+            valorProducto,
+            cantidad,
+            contado,
+            credito,
+            abono,
+            pago,
+            nuevoSaldo,
+            botellones,
+            formaDePago,
+          }}
+        />
       </div>
     </>
   );
