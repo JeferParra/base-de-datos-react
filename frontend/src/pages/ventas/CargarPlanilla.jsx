@@ -121,6 +121,21 @@ function CargarPlanilla() {
       return;
     }
 
+    if (isNaN(cantidad)) {
+      alert("Tipo de dato incorrecto en Cantidad");
+      return;
+    }
+
+    if (isNaN(pago)) {
+      alert("Tipo de dato incorrecto en Pago");
+      return;
+    }
+
+    if (isNaN(botellones)) {
+      alert("Tipo de dato incorrecto en Botellones");
+      return;
+    }
+
     const body = {
       fecha,
       vehiculo,
@@ -223,18 +238,47 @@ function CargarPlanilla() {
         inputRef.current.focus();
         inputRef.current.select();
       }
-    }, 100); // 100ms suele ser suficiente
+    }, 100);
   }
 
   async function confirmarVenta(e) {
     e.preventDefault();
-    setMostrarResultados(!mostrarResultados);
 
-    setCodigo("");
-    setCantidad(0);
-    setPago(0);
-    setBotellones(0);
-    setFormaDePago("Efectivo");
+    try {
+      const body = {
+        fecha,
+        vehiculo,
+        ruta,
+        producto,
+        valor: valorProducto,
+        codigo,
+        cantidad,
+        botellones,
+        formaDePago,
+        contado,
+        credito,
+        abono,
+        saldo: nuevoSaldo,
+      };
+      const response = await fetch(`${url}/cargarVenta`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      setMostrarResultados(!mostrarResultados);
+
+      setCodigo("");
+      setCantidad(0);
+      setPago(0);
+      setBotellones(0);
+      setFormaDePago("Efectivo");
+    } catch (error) {
+      console.error(
+        "Error al cargar la venta en la base de datos en el modalConfirmar",
+        error.message
+      );
+    }
   }
 
   return (

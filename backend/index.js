@@ -78,6 +78,74 @@ app.post("/nuevoCliente", async (req, res) => {
   }
 });
 
+// Cargar venta (planilla)
+app.post("/cargarVenta", async (req, res) => {
+  try {
+    const {
+      fecha,
+      vehiculo,
+      ruta,
+      producto,
+      valor,
+      codigo,
+      cantidad,
+      botellones,
+      formaDePago,
+      contado,
+      credito,
+      abono,
+      saldo,
+    } = req.body;
+    const responseData = await db.query(
+      "SELECT * FROM clientes WHERE codigo = $1",
+      [codigo]
+    );
+    const cliente = responseData.rows[0];
+    console.log(cliente);
+    res.json({ cliente: responseData.rows[0] });
+
+    //actualizar saldo del cliente
+    await db.query("UPDATE clientes SET saldo = $1 WHERE codigo = $2", [
+      saldo,
+      codigo,
+    ]);
+
+    //actualizar cantidad total de botellones que tiene el cliente
+    const totalBotellonesCliente =
+      Number(cliente.botellones) + Number(botellones);
+    await db.query("UPDATE clientes SET botellones = $1 WHERE codigo = $2", [
+      totalBotellonesCliente,
+      codigo,
+    ]);
+
+    const responseVenta = await db.query(
+      `
+      INSERT INTO ventas
+        (codigo, producto, valor, cantidad, contado, credito, abono, saldo, botellones, forma_de_pago, fecha, vehiculo, ruta, prestado_recuperado)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      `,
+      [
+        codigo,
+        producto,
+        valor,
+        cantidad,
+        contado,
+        credito,
+        abono,
+        saldo,
+        totalBotellonesCliente,
+        formaDePago,
+        fecha,
+        vehiculo,
+        ruta,
+        botellones,
+      ]
+    );
+  } catch (error) {
+    console.error("Error al tratar de cargar la venta", error.message);
+  }
+});
+
 // GET
 
 // Crear cliente
@@ -137,7 +205,7 @@ app.get("/historialCliente", async (req, res) => {
       [codigo]
     );
     const responseVentas = await db.query(
-      "SELECT * FROM ventas WHERE codigo = $1 ORDER BY fecha DESC",
+      "SELECT * FROM ventas WHERE codigo = $1 ORDER BY fecha DESC, fecha_creacion DESC",
       [codigo]
     );
 
