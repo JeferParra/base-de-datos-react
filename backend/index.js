@@ -148,53 +148,6 @@ app.post("/cargarVenta", async (req, res) => {
 
 // GET
 
-// Crear cliente
-
-app.get("/buscarCliente", async (req, res) => {
-  try {
-    const { codigo, nombre, barrio, vehiculo, ruta, estado } = req.query;
-
-    let query = "SELECT * FROM clientes WHERE 1=1";
-    const values = [];
-
-    if (codigo) {
-      values.push(Number(codigo));
-      query += ` AND codigo = $${values.length}`;
-    }
-
-    if (nombre) {
-      values.push(nombre);
-      query += ` AND nombre ILIKE '%' || $${values.length} || '%'`;
-    }
-
-    if (barrio) {
-      values.push(barrio);
-      query += ` AND barrio ILIKE '%' || $${values.length} || '%'`;
-    }
-
-    if (vehiculo && vehiculo !== "Todos") {
-      values.push(vehiculo);
-      query += ` AND vehiculo = $${values.length}`;
-    }
-
-    if (ruta && ruta !== "Todos") {
-      values.push(ruta);
-      query += ` AND ruta = $${values.length}`;
-    }
-
-    if (estado && estado !== "Todos") {
-      values.push(estado);
-      query += ` AND estado = $${values.length}`;
-    }
-
-    const response = await db.query(`${query} ORDER BY codigo ASC`, values);
-    res.json(response.rows);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Error en la búsqueda");
-  }
-});
-
 // Historial Cliente
 
 app.get("/historialCliente", async (req, res) => {
@@ -216,6 +169,26 @@ app.get("/historialCliente", async (req, res) => {
     res.json({ cliente: responseData.rows[0], ventas: responseVentas.rows });
   } catch (error) {
     console.error(error.message);
+  }
+});
+
+// Planilla de ventas
+
+app.get("/cargarPlanillaVentas", async (req, res) => {
+  try {
+    const { fecha, vehiculo, ruta } = req.query;
+
+    const response = await db.query(
+      "SELECT * FROM ventas WHERE fecha = $1 AND vehiculo = $2 AND ruta = $3 ORDER BY fecha_modificacion ASC",
+      [fecha, vehiculo, ruta]
+    );
+
+    console.log("Query params recibidos:", { fecha, vehiculo, ruta });
+
+    res.json(response.rows);
+    console.log(response.rows);
+  } catch (error) {
+    console.error("Error al cargar la planilla de ventas: ", error.message);
   }
 });
 
