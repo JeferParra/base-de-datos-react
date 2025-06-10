@@ -113,7 +113,9 @@ function BuscarCliente() {
   return (
     <>
       <div className="container my-5 pt-5 text-center">
-        <h1 className="bg-light rounded-pill w-75 mx-auto">Buscar Clientes</h1>
+        <h1 className="bg-white w-50 mx-auto py-2 rounded-pill">
+          Buscar Cliente
+        </h1>
       </div>
 
       <div
@@ -199,7 +201,7 @@ function BuscarCliente() {
             type="submit"
             className="d-block mx-auto w-25 mt-5"
           >
-            Submit
+            Buscar
           </Button>
         </Form>
       </div>
@@ -208,7 +210,7 @@ function BuscarCliente() {
           Coincidencias encontradas: {resultado.length}
         </h4>
         <table className="table mt-3 mx-auto table-striped table-hover table-bordered">
-          <thead>
+          <thead className="text-center fw-bold">
             <tr>
               <td>Codigo</td>
               <td>Nombre</td>
