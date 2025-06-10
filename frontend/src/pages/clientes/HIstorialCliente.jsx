@@ -58,7 +58,11 @@ function HistorialCliente() {
     <>
       <div className="container mb-5" data-bs-theme="dark">
         <div className="container"></div>
-        <h1 className="my-5 pt-5 text-center">Historial Cliente</h1>;
+        <div className="container my-5 pt-5 text-center">
+          <h1 className="bg-white w-50 mx-auto py-2 rounded-pill">
+            Historial Cliente
+          </h1>
+        </div>
         <div className="container bg-light py-5 rounded-pill">
           <Form onSubmit={enviar}>
             <Row>
