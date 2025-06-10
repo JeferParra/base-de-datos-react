@@ -22,9 +22,10 @@ function ModalConfirmarVenta({
       show={show}
       onHide={onClose}
       onExited={onExited}
-      size="lg"
+      size="xl"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      data-bs-theme="dark"
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
@@ -53,12 +54,17 @@ function ModalConfirmarVenta({
                 <tr>
                   <td>{codigo}</td>
                   <td>{producto}</td>
-                  <td>{producto !== "Abono" ? valorProducto : pago}</td>
+                  <td>
+                    ${" "}
+                    {new Intl.NumberFormat("es-CO").format(
+                      producto !== "Abono" ? valorProducto : pago
+                    )}
+                  </td>
                   <td>{cantidad}</td>
-                  <td>{contado}</td>
-                  <td>{credito}</td>
-                  <td>{abono}</td>
-                  <td>{nuevoSaldo}</td>
+                  <td>$ {new Intl.NumberFormat("es-CO").format(contado)}</td>
+                  <td>$ {new Intl.NumberFormat("es-CO").format(credito)}</td>
+                  <td>$ {new Intl.NumberFormat("es-CO").format(abono)}</td>
+                  <td>$ {new Intl.NumberFormat("es-CO").format(nuevoSaldo)}</td>
                   <td>{botellones}</td>
                   <td>{formaDePago}</td>
                 </tr>
@@ -70,7 +76,7 @@ function ModalConfirmarVenta({
           <Button
             variant="success"
             type="submit"
-            className="d-block mx-auto w-25 mt-5"
+            className="d-block mx-auto w-25 mt-2"
             onClick={onClick}
             autoFocus
           >
