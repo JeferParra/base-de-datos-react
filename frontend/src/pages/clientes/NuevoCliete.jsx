@@ -70,7 +70,11 @@ function NuevoCliente() {
 
   return (
     <>
-      <h1 className="my-5 pt-5 text-center">Nuevo Cliente</h1>
+      <div className="container my-5 pt-5 text-center">
+        <h1 className="bg-white w-50 mx-auto py-2 rounded-pill">
+          Nuevo Cliente
+        </h1>
+      </div>
       <div
         className="container mb-5 bg-light p-5 rounded-5"
         data-bs-theme="dark"
@@ -186,7 +190,7 @@ function NuevoCliente() {
             type="submit"
             className="d-block mx-auto w-25 mt-5"
           >
-            Submit
+            Crear Cliente
           </Button>
         </Form>
       </div>
