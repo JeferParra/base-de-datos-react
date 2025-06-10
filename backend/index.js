@@ -148,6 +148,53 @@ app.post("/cargarVenta", async (req, res) => {
 
 // GET
 
+// Crear cliente
+
+app.get("/buscarCliente", async (req, res) => {
+  try {
+    const { codigo, nombre, barrio, vehiculo, ruta, estado } = req.query;
+
+    let query = "SELECT * FROM clientes WHERE 1=1";
+    const values = [];
+
+    if (codigo) {
+      values.push(Number(codigo));
+      query += ` AND codigo = $${values.length}`;
+    }
+
+    if (nombre) {
+      values.push(nombre);
+      query += ` AND nombre ILIKE '%' || $${values.length} || '%'`;
+    }
+
+    if (barrio) {
+      values.push(barrio);
+      query += ` AND barrio ILIKE '%' || $${values.length} || '%'`;
+    }
+
+    if (vehiculo && vehiculo !== "Todos") {
+      values.push(vehiculo);
+      query += ` AND vehiculo = $${values.length}`;
+    }
+
+    if (ruta && ruta !== "Todos") {
+      values.push(ruta);
+      query += ` AND ruta = $${values.length}`;
+    }
+
+    if (estado && estado !== "Todos") {
+      values.push(estado);
+      query += ` AND estado = $${values.length}`;
+    }
+
+    const response = await db.query(`${query} ORDER BY codigo ASC`, values);
+    res.json(response.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Error en la búsqueda");
+  }
+});
+
 // Historial Cliente
 
 app.get("/historialCliente", async (req, res) => {
