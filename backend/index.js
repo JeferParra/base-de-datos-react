@@ -1,3 +1,6 @@
+import env from "dotenv";
+env.config();
+
 import express from "express";
 import cors from "cors";
 import db from "./db.js";
@@ -9,6 +12,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.json()); // req.body
+
+db.connect()
+  .then(() => console.log("Conexión exitosa a Neon"))
+  .catch((err) => console.error("Error de conexión", err));
 
 // Listas
 
