@@ -174,7 +174,7 @@ function HistorialCliente() {
                   <td>{venta.valor}</td>
                   <td>{venta.contado + venta.abono}</td>
                   <td>{venta.saldo}</td>
-                  <td>{venta.botellones}</td>
+                  <td>{venta.prestado_recuperado}</td>
                   <td>{venta.forma_de_pago}</td>
                 </tr>
               ))}

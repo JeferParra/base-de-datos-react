@@ -17,6 +17,12 @@ db.connect()
   .then(() => console.log("Conexión exitosa a Neon"))
   .catch((err) => console.error("Error de conexión", err));
 
+setInterval(() => {
+  db.query("SELECT 1").catch((err) => {
+    console.warn("Ping a la base de datos falló:", err.message);
+  });
+}, 60000);
+
 // Listas
 
 // // Vehiculos

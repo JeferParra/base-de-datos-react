@@ -19,4 +19,10 @@ const db = new Pool({
   ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
 });
 
+// Reconexion automatica a la base de datos despues de un tiempo de inactividad
+db.on("error", (err) => {
+  console.error("❌ Error inesperado en una conexión del pool:", err.message);
+  process.exit(1); // nodemon reinicia la app
+});
+
 export default db;
