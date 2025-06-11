@@ -204,15 +204,21 @@ function CargarPlanilla() {
       abono = pagoNumner;
       saldoFinal = saldo + compra - pagoNumner;
       console.log("opcion 5");
+    } else if (pagoNumner < compra + saldo) {
+      contado = pagoNumner - saldo;
+      abono = saldo;
+      credito = compra - pagoNumner;
+      saldoFinal = credito;
+      console.log("opcion 6");
     } else {
       console.log("No esta dentro de las opciones");
     }
 
-    setMostrarResultados(false);
     setContado(contado);
     setCredito(credito);
     setAbono(abono);
     setNuevoSaldo(saldoFinal);
+    setMostrarResultados(false);
   }
 
   // Confirmacion de la venta
@@ -240,6 +246,8 @@ function CargarPlanilla() {
       }
     }, 100);
   }
+
+  function calcularVenta() {}
 
   async function confirmarVenta(e) {
     e.preventDefault();
