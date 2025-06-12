@@ -5,7 +5,7 @@ import express from "express";
 import cors from "cors";
 import db from "./db.js";
 
-const port = 4000;
+const port = process.env.PORT || 4000;
 const app = express();
 
 // Middleware
