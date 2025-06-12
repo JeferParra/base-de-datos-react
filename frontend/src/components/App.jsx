@@ -7,7 +7,7 @@ import Header from "./Header";
 // Clientes
 import NuevoCliente from "../pages/clientes/NuevoCliente";
 import BuscarCliente from "../pages/clientes/BuscarCliente";
-import HistorialCliente from "../pages/clientes/HistorialCliente";
+import HistorialCliente from "../pages/clientes/Historial";
 
 // Ventas
 import CargarPlanilla from "../pages/ventas/CargarPlanilla";
