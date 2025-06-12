@@ -1,7 +1,7 @@
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 
-const url = "http://localhost:4000";
+const url = import.meta.env.VITE_API_URL;
 
 function ModalEditarCliente({
   show,

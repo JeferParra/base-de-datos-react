@@ -4,7 +4,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { useEffect, useState } from "react";
 
-const url = "http://localhost:4000";
+const url = import.meta.env.VITE_API_URL;
 
 function VerPlanilla() {
   const [fecha, setFecha] = useState("");

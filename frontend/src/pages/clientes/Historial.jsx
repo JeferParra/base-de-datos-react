@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import CustomModal from "../../components/CustomModal";
 
-const url = "http://localhost:4000";
+const url = import.meta.env.VITE_API_URL;
 
 function HistorialCliente() {
   const [hidden, setHidden] = useState(true);

@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
-const url = "http://localhost:4000";
+const url = import.meta.env.VITE_API_URL;
 
 function NuevoCliente() {
   const [vehiculos, setVehiculos] = useState([]);

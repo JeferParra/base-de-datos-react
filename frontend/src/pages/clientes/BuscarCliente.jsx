@@ -8,7 +8,7 @@ import { useState } from "react";
 import ModalEditarCliente from "../../components/modal/ModalEditarCliente";
 import { useEffect } from "react";
 
-const url = "http://localhost:4000";
+const url = import.meta.env.VITE_API_URL;
 
 function BuscarCliente() {
   const datosTabla = {

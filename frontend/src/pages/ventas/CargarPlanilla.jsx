@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { useEffect } from "react";
 import ModalConfirmarVenta from "../../components/modal/ModalConfirmarVenta";
 
-const url = "http://localhost:4000";
+const url = import.meta.env.VITE_API_URL;
 
 function CargarPlanilla() {
   // Datos predeterminados
