@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Header from "./Header";
 
 // Clientes
-import NuevoCliente from "../pages/clientes/NuevoCliete";
+import NuevoCliente from "../pages/clientes/NuevoCliente";
 import BuscarCliente from "../pages/clientes/BuscarCliente";
 import HistorialCliente from "../pages/clientes/HistorialCliente";
 
