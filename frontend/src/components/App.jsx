@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 // Import Components
 import Header from "./Header";
 
+// Home
+import Home from "../pages/home/Home";
+
 // Clientes
 import NuevoCliente from "../pages/clientes/NuevoCliente";
 import BuscarCliente from "../pages/clientes/BuscarCliente";
@@ -21,6 +24,8 @@ function App() {
           <Header />
 
           <Routes>
+            <Route path="/" element={<Home />} />
+
             <Route path="/nuevoCliente" element={<NuevoCliente />} />
             <Route path="/buscarCliente" element={<BuscarCliente />} />
             <Route path="/historialCliente" element={<HistorialCliente />} />
