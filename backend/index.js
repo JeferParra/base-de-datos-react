@@ -252,6 +252,10 @@ app.get("/cargarPlanillaVentas", async (req, res) => {
   }
 });
 
+app.get("/ping", (req, res) => {
+  res.status(200).send("Server On");
+});
+
 // PATCH
 
 // Editar cliente en buscar cliente
