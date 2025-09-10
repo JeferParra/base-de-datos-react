@@ -20,6 +20,9 @@ import HistorialCliente from "../pages/clientes/Historial";
 import CargarPlanilla from "../pages/ventas/CargarPlanilla";
 import VerPlanilla from "../pages/ventas/VerPlanilla";
 
+// Iniciar Sesion
+import IniciarSesion from "../pages/iniciarSesion/IniciarSesion";
+
 const url = import.meta.env.VITE_API_URL;
 
 function App() {
@@ -50,6 +53,8 @@ function App() {
           <Header />
 
           <Routes>
+            <Route path="/iniciarSesion" element={<IniciarSesion />} />
+
             <Route path="/" element={<Home />} />
 
             <Route path="/nuevoCliente" element={<NuevoCliente />} />
