@@ -11,9 +11,7 @@ function Loading() {
           speed="1.75"
           color="RGB(13, 270, 230)"
         />
-        <h5 style={{ color: "RGB(13, 270, 230)" }}>
-          Despertando el servidor...
-        </h5>
+        <h5 style={{ color: "RGB(13, 270, 230)" }}>Cargando...</h5>
       </div>
     </>
   );

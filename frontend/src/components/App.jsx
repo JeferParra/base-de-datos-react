@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 <link rel="stylesheet" href="../src/styles/App.css" />;
 
@@ -27,6 +33,13 @@ const url = import.meta.env.VITE_API_URL;
 
 function App() {
   const [backendReady, setBackendReady] = useState(false);
+  const [estaAutenticado, setEstaAutenticado] = useState(
+    () => localStorage.getItem("auth") === "true"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("auth", estaAutenticado);
+  }, [estaAutenticado]);
 
   useEffect(() => {
     const checkBackend = async () => {
@@ -34,7 +47,6 @@ function App() {
         const response = await fetch(`${url}/ping`);
         if (response.ok) {
           setBackendReady(true);
-          console.log(backendReady);
         }
       } catch (error) {
         console.error("Error al despertar el backend: ", error.message);
@@ -50,19 +62,80 @@ function App() {
     <>
       <div className="container d-flex flex-column min-vh-100 min-vw-100 bg-secondary px-0">
         <Router>
-          <Header />
+          {estaAutenticado && (
+            <Header setEstaAutenticado={setEstaAutenticado} />
+          )}
 
           <Routes>
-            <Route path="/iniciarSesion" element={<IniciarSesion />} />
+            <Route
+              path="/iniciarSesion"
+              element={
+                <IniciarSesion setEstaAutenticado={setEstaAutenticado} />
+              }
+            />
 
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                estaAutenticado ? (
+                  <Home />
+                ) : (
+                  <Navigate to="/iniciarSesion" replace />
+                )
+              }
+            />
 
-            <Route path="/nuevoCliente" element={<NuevoCliente />} />
-            <Route path="/buscarCliente" element={<BuscarCliente />} />
-            <Route path="/historialCliente" element={<HistorialCliente />} />
+            <Route
+              path="/nuevoCliente"
+              element={
+                estaAutenticado ? (
+                  <NuevoCliente />
+                ) : (
+                  <Navigate to="/iniciarSesion" replace />
+                )
+              }
+            />
+            <Route
+              path="/buscarCliente"
+              element={
+                estaAutenticado ? (
+                  <BuscarCliente />
+                ) : (
+                  <Navigate to="/iniciarSesion" replace />
+                )
+              }
+            />
+            <Route
+              path="/historialCliente"
+              element={
+                estaAutenticado ? (
+                  <HistorialCliente />
+                ) : (
+                  <Navigate to="/iniciarSesion" replace />
+                )
+              }
+            />
 
-            <Route path="/cargarPlanilla" element={<CargarPlanilla />} />
-            <Route path="/verPlanilla" element={<VerPlanilla />} />
+            <Route
+              path="/cargarPlanilla"
+              element={
+                estaAutenticado ? (
+                  <CargarPlanilla />
+                ) : (
+                  <Navigate to="/iniciarSesion" replace />
+                )
+              }
+            />
+            <Route
+              path="/verPlanilla"
+              element={
+                estaAutenticado ? (
+                  <VerPlanilla />
+                ) : (
+                  <Navigate to="/iniciarSesion" replace />
+                )
+              }
+            />
           </Routes>
         </Router>
       </div>

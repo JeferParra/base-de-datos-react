@@ -4,6 +4,7 @@ env.config();
 import express from "express";
 import cors from "cors";
 import db from "./db.js";
+import bcrypt from "bcrypt";
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -249,6 +250,36 @@ app.get("/cargarPlanillaVentas", async (req, res) => {
     console.log(response.rows);
   } catch (error) {
     console.error("Error al cargar la planilla de ventas: ", error.message);
+  }
+});
+
+// Login
+
+app.post("/login", async (req, res) => {
+  try {
+    const { usuario, password } = req.body;
+
+    const userResult = await db.query(
+      "SELECT * FROM usuarios WHERE usuario = $1",
+      [usuario]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(401).json({ error: "Usuario no encontrado" });
+    }
+
+    const user = userResult.rows[0];
+
+    const passwordMatch = await bcrypt.compare(password, user.contrasena);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Contrasena incorrecta" });
+    }
+
+    // Pendiente configurar Cookie de inicio de sesion
+
+    res.json({ mensaje: "Datos recibidos correctamente" });
+  } catch (error) {
+    console.error("Error al acceder al los usuarios: ", error.message);
   }
 });
 

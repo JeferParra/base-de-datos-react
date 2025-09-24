@@ -2,8 +2,19 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import { useNavigate } from "react-router-dom";
 
-function Header() {
+function Header({ setEstaAutenticado }) {
+  const navigate = useNavigate();
+
+  const hadleLogout = () => {
+    localStorage.removeItem("auth");
+
+    setEstaAutenticado(false);
+
+    navigate("/iniciarSesion");
+  };
+
   return (
     <>
       <Navbar
@@ -37,6 +48,7 @@ function Header() {
                 </NavDropdown.Item>
               </NavDropdown>
               <Nav.Link href="#pricing">Productos</Nav.Link>
+              <Nav.Link onClick={hadleLogout}>Cerrar Sesion</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
