@@ -7,11 +7,12 @@ import { useNavigate } from "react-router-dom";
 
 const url = import.meta.env.VITE_API_URL;
 
-function IniciarSesion({ setEstaAutenticado }) {
+function IniciarSesion({ setAuthData }) {
   const navigate = useNavigate();
 
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
+  const [empresa, setEmpresa] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +23,7 @@ function IniciarSesion({ setEstaAutenticado }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ usuario, password }),
+        body: JSON.stringify({ usuario, empresa, password }),
       });
 
       if (!response.ok) {
@@ -30,10 +31,17 @@ function IniciarSesion({ setEstaAutenticado }) {
         return;
       }
 
-      const data = await response.json();
-      console.log("Respuesta del servidor: ", data);
+      if (response.ok) {
+        const data = await response.json();
+        setAuthData({
+          autenticado: true,
+          empresa: data.empresa,
+          usuario: data.usuario,
+          baseDeDatos: data.base_de_datos,
+        });
+        console.log(data); // Eliminar el console.log
+      }
 
-      setEstaAutenticado(true);
       navigate("/");
     } catch (error) {
       console.error("Error en la peticion:", error);
@@ -62,7 +70,23 @@ function IniciarSesion({ setEstaAutenticado }) {
               <Form.Control
                 placeholder="Nombre de usuario"
                 onChange={(e) => setUsuario(e.target.value)}
+                required
                 autoFocus
+              />
+            </Form.Group>
+          </Col>
+
+          <Col>
+            <Form.Group
+              as={Row}
+              controlId="empresa"
+              className="col-6 fw-bold mx-auto mb-3"
+            >
+              <Form.Label className="px-0">Empresa:</Form.Label>
+              <Form.Control
+                placeholder="Empresa"
+                onChange={(e) => setEmpresa(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -78,6 +102,7 @@ function IniciarSesion({ setEstaAutenticado }) {
                 type="password"
                 placeholder="Contraseña"
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>

@@ -22,16 +22,32 @@ function NuevoCliente() {
   const [vehiculo, setVehiculo] = useState("");
   const [ruta, setRuta] = useState("");
 
+  const authData = JSON.parse(localStorage.getItem("authData"));
+  const baseDeDatos = authData?.baseDeDatos;
+  console.log(authData);
+
   useEffect(() => {
     async function listas() {
       try {
         // vehiculos
-        const resVehiculos = await fetch(`${url}/vehiculos`);
+        const resVehiculos = await fetch(`${url}/vehiculos`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-basededatos": baseDeDatos,
+          },
+        });
         const listaVehiculos = await resVehiculos.json();
         setVehiculos(listaVehiculos);
 
         // rutas
-        const resRutas = await fetch(`${url}/rutas`);
+        const resRutas = await fetch(`${url}/rutas`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-basededatos": baseDeDatos,
+          },
+        });
         const listaRutas = await resRutas.json();
         setRutas(listaRutas);
       } catch (error) {

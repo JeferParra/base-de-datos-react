@@ -33,13 +33,22 @@ const url = import.meta.env.VITE_API_URL;
 
 function App() {
   const [backendReady, setBackendReady] = useState(false);
-  const [estaAutenticado, setEstaAutenticado] = useState(
-    () => localStorage.getItem("auth") === "true"
-  );
+  // const [estaAutenticado, setEstaAutenticado] = useState(
+  //   () => localStorage.getItem("auth") === "true"
+  // );
+  const [authData, setAuthData] = useState(() => {
+    const stored = localStorage.getItem("authData");
+    return stored ? JSON.parse(stored) : { autenticado: false };
+  });
+
+  // useEffect(() => {
+  //   localStorage.setItem("auth", estaAutenticado);
+  // }, [estaAutenticado]);
 
   useEffect(() => {
-    localStorage.setItem("auth", estaAutenticado);
-  }, [estaAutenticado]);
+    localStorage.setItem("authData", JSON.stringify(authData));
+    console.log(JSON.parse(localStorage.getItem("authData")));
+  }, [authData]);
 
   useEffect(() => {
     const checkBackend = async () => {
@@ -62,22 +71,20 @@ function App() {
     <>
       <div className="container d-flex flex-column min-vh-100 min-vw-100 bg-secondary px-0">
         <Router>
-          {estaAutenticado && (
-            <Header setEstaAutenticado={setEstaAutenticado} />
+          {authData.autenticado && (
+            <Header setAuthData={setAuthData} authData={authData} />
           )}
 
           <Routes>
             <Route
               path="/iniciarSesion"
-              element={
-                <IniciarSesion setEstaAutenticado={setEstaAutenticado} />
-              }
+              element={<IniciarSesion setAuthData={setAuthData} />}
             />
 
             <Route
               path="/"
               element={
-                estaAutenticado ? (
+                authData.autenticado ? (
                   <Home />
                 ) : (
                   <Navigate to="/iniciarSesion" replace />
@@ -88,7 +95,7 @@ function App() {
             <Route
               path="/nuevoCliente"
               element={
-                estaAutenticado ? (
+                authData.autenticado ? (
                   <NuevoCliente />
                 ) : (
                   <Navigate to="/iniciarSesion" replace />
@@ -98,7 +105,7 @@ function App() {
             <Route
               path="/buscarCliente"
               element={
-                estaAutenticado ? (
+                authData.autenticado ? (
                   <BuscarCliente />
                 ) : (
                   <Navigate to="/iniciarSesion" replace />
@@ -108,7 +115,7 @@ function App() {
             <Route
               path="/historialCliente"
               element={
-                estaAutenticado ? (
+                authData.autenticado ? (
                   <HistorialCliente />
                 ) : (
                   <Navigate to="/iniciarSesion" replace />
@@ -119,7 +126,7 @@ function App() {
             <Route
               path="/cargarPlanilla"
               element={
-                estaAutenticado ? (
+                authData.autenticado ? (
                   <CargarPlanilla />
                 ) : (
                   <Navigate to="/iniciarSesion" replace />
@@ -129,7 +136,7 @@ function App() {
             <Route
               path="/verPlanilla"
               element={
-                estaAutenticado ? (
+                authData.autenticado ? (
                   <VerPlanilla />
                 ) : (
                   <Navigate to="/iniciarSesion" replace />

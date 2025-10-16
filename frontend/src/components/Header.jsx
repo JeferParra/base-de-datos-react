@@ -4,13 +4,13 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { useNavigate } from "react-router-dom";
 
-function Header({ setEstaAutenticado }) {
+function Header({ setAuthData, authData }) {
   const navigate = useNavigate();
 
   const hadleLogout = () => {
-    localStorage.removeItem("auth");
+    localStorage.removeItem("authData");
 
-    setEstaAutenticado(false);
+    setAuthData({ autenticado: false });
 
     navigate("/iniciarSesion");
   };
@@ -25,7 +25,7 @@ function Header({ setEstaAutenticado }) {
         fixed="top"
       >
         <Container>
-          <Navbar.Brand href="/">Empresa</Navbar.Brand>
+          <Navbar.Brand href="/">{authData.empresa}</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="ms-auto">

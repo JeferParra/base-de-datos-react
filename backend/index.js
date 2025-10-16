@@ -3,7 +3,7 @@ env.config();
 
 import express from "express";
 import cors from "cors";
-import db from "./db.js";
+import { getDBConnection } from "./db.js";
 import bcrypt from "bcrypt";
 
 const port = process.env.PORT || 4000;
@@ -14,22 +14,26 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // req.body
 
-db.connect()
-  .then(() => console.log("Conexión exitosa a Neon"))
-  .catch((err) => console.error("Error de conexión", err));
+// db.connect()
+//   .then(() => console.log("Conexión exitosa a Neon"))
+//   .catch((err) => console.error("Error de conexión", err));
 
-setInterval(() => {
-  db.query("SELECT 1").catch((err) => {
-    console.warn("Ping a la base de datos falló:", err.message);
-  });
-}, 60000);
+// setInterval(() => {
+//   db.query("SELECT 1").catch((err) => {
+//     console.warn("Ping a la base de datos falló:", err.message);
+//   });
+// }, 60000);
 
 // Listas
 
 // // Vehiculos
 
 app.get("/vehiculos", async (req, res) => {
+  const baseDeDatos = req.headers["x-basededatos"];
   try {
+    const db = getDBConnection(baseDeDatos);
+    await db.connect();
+
     const response = await db.query("SELECT * FROM vehiculos");
     res.json(response.rows);
   } catch (error) {
@@ -40,9 +44,14 @@ app.get("/vehiculos", async (req, res) => {
 // // Rutas
 
 app.get("/rutas", async (req, res) => {
+  const baseDeDatos = req.headers["x-basededatos"];
   try {
+    const db = getDBConnection(baseDeDatos);
+    await db.connect();
+
     const response = await db.query("SELECT * FROM rutas");
     res.json(response.rows);
+    await db.end();
   } catch (error) {
     console.error(error.message);
   }
@@ -51,7 +60,11 @@ app.get("/rutas", async (req, res) => {
 // // Productos
 
 app.get("/productos", async (req, res) => {
+  const baseDeDatos = req.headers["x-basededatos"];
   try {
+    const db = getDBConnection(baseDeDatos);
+    await db.connect();
+
     const response = await db.query("SELECT * FROM productos");
     res.json(response.rows);
   } catch (error) {
@@ -257,14 +270,18 @@ app.get("/cargarPlanillaVentas", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   try {
-    const { usuario, password } = req.body;
+    const db = getDBConnection("usuarios");
+    await db.connect();
+    const { usuario, empresa, password } = req.body;
 
     const userResult = await db.query(
       "SELECT * FROM usuarios WHERE usuario = $1",
       [usuario]
     );
+    console.log(userResult);
 
     if (userResult.rows.length === 0) {
+      await db.end();
       return res.status(401).json({ error: "Usuario no encontrado" });
     }
 
@@ -272,12 +289,25 @@ app.post("/login", async (req, res) => {
 
     const passwordMatch = await bcrypt.compare(password, user.contrasena);
     if (!passwordMatch) {
+      await db.end();
       return res.status(401).json({ error: "Contrasena incorrecta" });
+    }
+
+    if (empresa !== user.empresa) {
+      await db.end();
+      return res.status(401).json({ error: "La empresa no coincide" });
     }
 
     // Pendiente configurar Cookie de inicio de sesion
 
-    res.json({ mensaje: "Datos recibidos correctamente" });
+    res.json({
+      mensaje: "Datos recibidos correctamente",
+      usuario: user.usuario_nombre,
+      empresa: user.empresa_nombre,
+      base_de_datos: user.base_de_datos,
+    });
+    console.log(user);
+    await db.end();
   } catch (error) {
     console.error("Error al acceder al los usuarios: ", error.message);
   }
