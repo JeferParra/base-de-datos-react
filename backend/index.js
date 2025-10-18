@@ -26,6 +26,31 @@ app.use(express.json()); // req.body
 
 // Listas
 
+// // Clientes
+
+app.get("/clientes", async (req, res) => {
+  const baseDeDatos = req.headers["x-basededatos"];
+  const { codigo } = req.query;
+  try {
+    const db = getDBConnection(baseDeDatos);
+    await db.connect();
+
+    let query = "SELECT * FROM clientes";
+    const values = [];
+
+    if (codigo) {
+      query += " WHERE codigo = $1";
+      values.push(codigo);
+    }
+
+    const response = await db.query(query, values);
+    res.json(response.rows);
+    await db.end();
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
 // // Vehiculos
 
 app.get("/vehiculos", async (req, res) => {
@@ -36,6 +61,7 @@ app.get("/vehiculos", async (req, res) => {
 
     const response = await db.query("SELECT * FROM vehiculos");
     res.json(response.rows);
+    await db.end();
   } catch (error) {
     console.error(error.message);
   }
@@ -67,6 +93,7 @@ app.get("/productos", async (req, res) => {
 
     const response = await db.query("SELECT * FROM productos");
     res.json(response.rows);
+    await db.end();
   } catch (error) {
     console.error("Problemas al cargar los productos", error.message);
   }
@@ -79,8 +106,11 @@ app.get("/productos", async (req, res) => {
 // Nuevo Cliente
 
 app.post("/nuevoCliente", async (req, res) => {
+  const baseDeDatos = req.headers["x-basededatos"];
+
   try {
-    console.log(req.body);
+    const db = getDBConnection(baseDeDatos);
+    await db.connect();
     const {
       codigo,
       nombre,
@@ -92,16 +122,19 @@ app.post("/nuevoCliente", async (req, res) => {
       ruta,
     } = req.body;
 
-    console.log("Nuevo cliente registrado");
-
     const response = await db.query(
       `INSERT INTO clientes 
     (codigo, nombre, direccion, barrio, telefono, descripcion, vehiculo, ruta, estado)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8,'Activo')`,
       [codigo, nombre, direccion, barrio, telefono, descripcion, vehiculo, ruta]
     );
+
+    res.json({ mensaje: "Cliente registrado exitosamente." });
+
+    await db.end();
   } catch (error) {
-    console.error(error.message);
+    console.error("Error en /nuevoCliente:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -278,7 +311,6 @@ app.post("/login", async (req, res) => {
       "SELECT * FROM usuarios WHERE usuario = $1",
       [usuario]
     );
-    console.log(userResult);
 
     if (userResult.rows.length === 0) {
       await db.end();
@@ -306,7 +338,6 @@ app.post("/login", async (req, res) => {
       empresa: user.empresa_nombre,
       base_de_datos: user.base_de_datos,
     });
-    console.log(user);
     await db.end();
   } catch (error) {
     console.error("Error al acceder al los usuarios: ", error.message);

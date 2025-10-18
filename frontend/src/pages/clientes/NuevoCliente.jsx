@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
+import { Fade } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
@@ -14,6 +15,9 @@ function NuevoCliente() {
   // Variables del formulario
 
   const [codigo, setCodigo] = useState("");
+  const [validacionCodigo, setValidacionCodigo] = useState(true);
+  const [codigoAnterior, setCodigoAnterior] = useState("");
+
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [barrio, setBarrio] = useState("");
@@ -24,7 +28,6 @@ function NuevoCliente() {
 
   const authData = JSON.parse(localStorage.getItem("authData"));
   const baseDeDatos = authData?.baseDeDatos;
-  console.log(authData);
 
   useEffect(() => {
     async function listas() {
@@ -58,8 +61,52 @@ function NuevoCliente() {
     listas();
   }, []);
 
+  async function datosCliente(e) {
+    if (codigo === codigoAnterior || codigo.trim() === "") return;
+    const params = new URLSearchParams();
+    params.append("codigo", codigo);
+    try {
+      const response = await fetch(`${url}/clientes?${params.toString()}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-basededatos": baseDeDatos,
+        },
+      });
+      const data = await response.json();
+      console.log(data.length);
+
+      if (data.length === 0) {
+        console.log("Codigo disponible");
+        setValidacionCodigo(true);
+        return;
+      }
+
+      setValidacionCodigo(false);
+      console.log("codigo no disponible");
+    } catch (error) {
+      console.error("Error al cargar los datos de los clientes", error.message);
+    }
+  }
+
   async function enviar(e) {
-    // e.preventDefault();
+    e.preventDefault();
+
+    if (codigo.length !== 4) {
+      alert("El codigo debe ser de 4 digitos.");
+      return;
+    }
+
+    if (!vehiculo || vehiculo === "") {
+      alert("⚠️ Por favor seleccione un vehículo antes de continuar.");
+      return;
+    }
+
+    if (!ruta || ruta === "") {
+      alert("⚠️ Por favor seleccione una ruta antes de continuar.");
+      return;
+    }
+
     try {
       const body = {
         codigo,
@@ -74,13 +121,26 @@ function NuevoCliente() {
 
       const response = await fetch(`${url}/nuevoCliente`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-basededatos": baseDeDatos,
+        },
         body: JSON.stringify(body),
       });
 
-      window.location = "/nuevoCliente";
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("✅ Nuevo cliente registrado exitosamente.");
+        window.location = "/nuevoCliente";
+      } else {
+        alert(
+          `❌ Error al registrar cliente: ${errorData.error || "Desconocido"}`
+        );
+      }
     } catch (error) {
       console.error(error.message);
+      alert("⚠️ Ocurrió un error inesperado al registrar el cliente.");
     }
   }
 
@@ -105,10 +165,23 @@ function NuevoCliente() {
                 name="codigo"
                 min={0}
                 autoComplete="off"
-                onChange={(e) => setCodigo(e.target.value)}
+                onChange={(e) => {
+                  const valor = e.target.value;
+                  // Solo permitir números y máximo 10 caracteres
+                  if (/^\d{0,4}$/.test(valor)) {
+                    setCodigo(valor);
+                  }
+                }}
+                onBlur={() => datosCliente()}
+                isInvalid={!validacionCodigo}
                 value={codigo}
+                autoFocus
+                maxLength={4}
                 required
               />
+              <Form.Text className="text-danger" hidden={validacionCodigo}>
+                ⚠️ El código ingresado ya existe.
+              </Form.Text>
             </Form.Group>
 
             <Form.Group as={Col} controlId="nombre" autoComplete="off">
@@ -151,10 +224,20 @@ function NuevoCliente() {
             <Form.Group as={Col} controlId="direccion" className="col-5">
               <Form.Label>Telefono</Form.Label>
               <Form.Control
+                type="tel"
+                maxLength={10}
+                pattern="[0-9]{10}"
                 placeholder="Numero de Telefono"
                 name="telefono"
-                onChange={(e) => setTelefono(e.target.value)}
+                onChange={(e) => {
+                  const valor = e.target.value;
+                  // Solo permitir números y máximo 10 caracteres
+                  if (/^\d{0,10}$/.test(valor)) {
+                    setTelefono(valor);
+                  }
+                }}
                 value={telefono}
+                required
               />
             </Form.Group>
             <Form.Group as={Col} controlId="barrio">
@@ -175,6 +258,7 @@ function NuevoCliente() {
                 name="vehiculo"
                 onChange={(e) => setVehiculo(e.target.value)}
                 value={vehiculo}
+                required
               >
                 <option hidden defaultValue="">
                   Seleccione
