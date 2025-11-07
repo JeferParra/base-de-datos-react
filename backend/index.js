@@ -262,7 +262,10 @@ app.get("/buscarCliente", async (req, res) => {
 // Historial Cliente
 
 app.get("/historialCliente", async (req, res) => {
+  const baseDeDatos = req.headers["x-basededatos"];
   try {
+    const db = getDBConnection(baseDeDatos);
+    await db.connect();
     const { codigo } = req.query;
     const responseData = await db.query(
       "SELECT * FROM clientes WHERE codigo = $1",
@@ -278,6 +281,8 @@ app.get("/historialCliente", async (req, res) => {
     }
 
     res.json({ cliente: responseData.rows[0], ventas: responseVentas.rows });
+
+    await db.end();
   } catch (error) {
     console.error(error.message);
   }

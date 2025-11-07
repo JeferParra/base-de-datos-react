@@ -17,6 +17,9 @@ function HistorialCliente() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
+  const authData = JSON.parse(localStorage.getItem("authData"));
+  const baseDeDatos = authData?.baseDeDatos;
+
   async function enviar(e) {
     e.preventDefault();
 
@@ -28,7 +31,14 @@ function HistorialCliente() {
       params.append("codigo", codigo);
 
       const response = await fetch(
-        `${url}/historialCliente?${params.toString()}`
+        `${url}/historialCliente?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-basededatos": baseDeDatos,
+          },
+        }
       );
 
       // Revision de si existe el cliente
@@ -50,7 +60,10 @@ function HistorialCliente() {
       setDataCliente(data.cliente);
       setDataVentas(data.ventas);
     } catch (error) {
-      console.error(error.message);
+      console.error(
+        "Error al intentar ver el histirial del cliente: ",
+        error.message
+      );
     }
   }
 
