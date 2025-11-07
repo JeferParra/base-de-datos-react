@@ -31,6 +31,9 @@ function BuscarCliente() {
 
   const [refrescar, setRefrescar] = useState(false);
 
+  const authData = JSON.parse(localStorage.getItem("authData"));
+  const baseDeDatos = authData?.baseDeDatos;
+
   function activarEspacios(e) {
     const opcion = e.target.value;
 
@@ -95,7 +98,16 @@ function BuscarCliente() {
         params.append("barrio", inputBuscar);
       }
 
-      const response = await fetch(`${url}/buscarCliente?${params.toString()}`);
+      const response = await fetch(
+        `${url}/buscarCliente?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-basededatos": baseDeDatos,
+          },
+        }
+      );
       const data = await response.json();
 
       setResultado(data);

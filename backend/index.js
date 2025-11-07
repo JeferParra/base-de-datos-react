@@ -208,10 +208,13 @@ app.post("/cargarVenta", async (req, res) => {
 
 // GET
 
-// Crear cliente
+// Buscar cliente
 
 app.get("/buscarCliente", async (req, res) => {
+  const baseDeDatos = req.headers["x-basededatos"];
   try {
+    const db = getDBConnection(baseDeDatos);
+    await db.connect();
     const { codigo, nombre, barrio, vehiculo, ruta, estado } = req.query;
 
     let query = "SELECT * FROM clientes WHERE 1=1";
@@ -249,6 +252,7 @@ app.get("/buscarCliente", async (req, res) => {
 
     const response = await db.query(`${query} ORDER BY codigo ASC`, values);
     res.json(response.rows);
+    await db.end();
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Error en la búsqueda");
@@ -352,18 +356,27 @@ app.get("/ping", (req, res) => {
 
 // Editar cliente en buscar cliente
 app.patch("/editarCliente", async (req, res) => {
-  const { codigo } = req.query;
-  const campos = req.body;
+  const baseDeDatos = req.headers["x-basededatos"];
+  try {
+    const db = getDBConnection(baseDeDatos);
+    await db.connect();
 
-  const columnas = Object.keys(campos);
-  const valores = Object.values(campos);
+    const { codigo } = req.query;
+    const campos = req.body;
 
-  const setQuery = columnas.map((col, i) => `${col} = $${i + 1}`).join(" ,");
-  valores.push(codigo);
-  const query = `UPDATE clientes SET ${setQuery} WHERE codigo = $${valores.length}`;
+    const columnas = Object.keys(campos);
+    const valores = Object.values(campos);
 
-  await db.query(query, valores);
-  res.json({ mensaje: "Cliente actualizado correctamente" });
+    const setQuery = columnas.map((col, i) => `${col} = $${i + 1}`).join(" ,");
+    valores.push(codigo);
+    const query = `UPDATE clientes SET ${setQuery} WHERE codigo = $${valores.length}`;
+
+    await db.query(query, valores);
+    res.json({ mensaje: "Cliente actualizado correctamente" });
+    await db.end();
+  } catch (error) {
+    console.error("Error al editar el cliente: ", error.message);
+  }
 });
 
 // Listen
