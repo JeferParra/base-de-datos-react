@@ -140,7 +140,10 @@ app.post("/nuevoCliente", async (req, res) => {
 
 // Cargar venta (planilla)
 app.post("/cargarVenta", async (req, res) => {
+  const baseDeDatos = req.headers["x-basededatos"];
   try {
+    const db = getDBConnection(baseDeDatos);
+    await db.connect();
     const {
       fecha,
       vehiculo,
@@ -201,6 +204,7 @@ app.post("/cargarVenta", async (req, res) => {
         botellones,
       ]
     );
+    await db.end();
   } catch (error) {
     console.error("Error al tratar de cargar la venta", error.message);
   }

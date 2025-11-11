@@ -42,6 +42,9 @@ function CargarPlanilla() {
   // Mostrar resultados
   const [mostrarResultados, setMostrarResultados] = useState(true);
 
+  const authData = JSON.parse(localStorage.getItem("authData"));
+  const baseDeDatos = authData?.baseDeDatos;
+
   useEffect(() => {
     listas();
   }, []);
@@ -51,17 +54,35 @@ function CargarPlanilla() {
   async function listas() {
     try {
       // Vehiculos
-      const responseVehiculos = await fetch(`${url}/vehiculos`);
+      const responseVehiculos = await fetch(`${url}/vehiculos`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-basededatos": baseDeDatos,
+        },
+      });
       const responseListaVehiculos = await responseVehiculos.json();
       setListaVehiculos(responseListaVehiculos);
 
       // Rutas
-      const responseRutas = await fetch(`${url}/rutas`);
+      const responseRutas = await fetch(`${url}/rutas`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-basededatos": baseDeDatos,
+        },
+      });
       const responseListaRutas = await responseRutas.json();
       setListaRutas(responseListaRutas);
 
       // Productos
-      const responseProductos = await fetch(`${url}/productos`);
+      const responseProductos = await fetch(`${url}/productos`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-basededatos": baseDeDatos,
+        },
+      });
       const responseListaProductos = await responseProductos.json();
       setListaProductos(responseListaProductos);
     } catch (error) {
@@ -77,7 +98,14 @@ function CargarPlanilla() {
     params.append("codigo", codigo);
     try {
       const response = await fetch(
-        `${url}/historialCliente?${params.toString()}`
+        `${url}/historialCliente?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-basededatos": baseDeDatos,
+          },
+        }
       );
       const data = await response.json();
 
@@ -270,7 +298,10 @@ function CargarPlanilla() {
       };
       const response = await fetch(`${url}/cargarVenta`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-basededatos": baseDeDatos,
+        },
         body: JSON.stringify(body),
       });
 
